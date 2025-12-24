@@ -1,6 +1,5 @@
 import numpy as np
 from enum import Enum
-from scipy.stats import multivariate_normal
 
 ## ///
 ##AutoEncoder Implementation
@@ -68,6 +67,12 @@ class Autoencoder:
     def forward(self, X):
         for layer in self.layers:
             X = layer.forward(X)
+        return X
+    
+    def decoder(self, X):
+        for i, layer in enumerate(self.layers):
+            if i > self.bottleneck_idx:  
+                X = layer.forward(X)
         return X
     
     def encode(self, X):
@@ -298,7 +303,7 @@ class GaussianMixtureModel:
             
             try:
                 weighted_log_probs[:, k] = np.log(self.weights_[k] + 1e-10) + \
-                                           multivariate_normal.logpdf(X, mean=self.means_[k], cov=cov)
+                                          self._log_gaussian(X, mean=self.means_[k], cov=cov)
             except np.linalg.LinAlgError:
                 weighted_log_probs[:, k] = -np.inf
 
@@ -336,6 +341,22 @@ class GaussianMixtureModel:
                 diff = X - self.means_[k]
                 diff_sq_norm = np.sum(diff**2, axis=1)
                 self.covariances_[k] = np.sum(responsibilities[:, k] * diff_sq_norm) / (Nk[k] * n_features)
+                
+    def _log_gaussian(self, X, mean, cov):
+        n_features = X.shape[1]
+
+        # Ensure covariance is positive definite
+        cov_inv = np.linalg.inv(cov)
+        sign, logdet = np.linalg.slogdet(cov)
+
+        diff = X - mean
+        exponent = np.sum(diff @ cov_inv * diff, axis=1)
+
+        return -0.5 * (
+            n_features * np.log(2 * np.pi)
+            + logdet
+            + exponent
+        )
 
     def fit(self, X):
         self._initialize_parameters(X)
@@ -358,6 +379,10 @@ class GaussianMixtureModel:
             
             self._m_step(X, resp)
         return self
+    
+    def predict(self, X):
+        _, responsibilities = self._e_step(X)
+        return np.argmax(responsibilities, axis=1)
 
     def _log_sum_exp(self, log_probs):
         max_log = np.max(log_probs, axis=1, keepdims=True)
