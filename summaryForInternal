@@ -1,0 +1,51 @@
+1. Silhouette Score
+
+Range: [-1, 1]
+Better: Higher is better (closer to 1)
+What it measures: How well each point fits in its assigned cluster compared to other clusters
+How it works:
+
+For each point, calculates:
+
+a(i): Average distance to other points in the same cluster (cohesion)
+b(i): Average distance to points in the nearest different cluster (separation)
+
+
+Formula: (b - a) / max(a, b)
+Values near +1: Point is well-matched to its cluster
+Values near 0: Point is on the border between clusters
+Values near -1: Point is probably in the wrong cluster
+
+
+
+
+2. Davies-Bouldin Index
+
+Range: [0, ∞)
+Better: Lower is better (closer to 0)
+What it measures: Average similarity ratio between each cluster and its most similar cluster
+How it works:
+
+For each cluster, calculates its "spread" (average distance from points to centroid)
+Compares each cluster to all others by computing: (spread_i + spread_j) / distance_between_centroids
+Takes the maximum ratio for each cluster (worst case)
+Averages across all clusters
+Lower values = clusters are far apart and compact
+Higher values = clusters overlap or are too spread out
+
+
+
+
+3. Calinski-Harabasz Index (Variance Ratio Criterion)
+
+Range: [0, ∞)
+Better: Higher is better
+What it measures: Ratio of between-cluster variance to within-cluster variance
+How it works:
+
+Between-cluster dispersion (BCSS): How far cluster centroids are from the overall data centroid (separation)
+Within-cluster dispersion (WCSS): How spread out points are within each cluster (compactness)
+Formula: (BCSS / (k-1)) / (WCSS / (n-k))
+Higher values = well-separated, compact clusters
+Lower values = overlapping or loose clusters
+Similar concept to F-statistic in ANOVA

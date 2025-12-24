@@ -12,6 +12,8 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 def tanh(x):
     return np.tanh(x)
+def linear(x):
+    return x
 
 def relu_der(x):
     return (x > 0).astype(float)
@@ -22,6 +24,9 @@ def sigmoid_der(x):
 
 def tanh_der(x):
     return 1 - np.tanh(x) ** 2
+
+def linear_der(x):
+    return np.ones_like(x)
 
 # Dense Layer Class
 class DenseLayer:
@@ -37,6 +42,9 @@ class DenseLayer:
         elif activation == 'relu':
             self.activation = relu
             self.activation_der = relu_der
+        elif activation == 'linear':
+            self.activation = linear
+            self.activation_der = linear_der
 
     def forward(self, X):
         self.X = X
