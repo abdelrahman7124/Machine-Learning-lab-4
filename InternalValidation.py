@@ -32,9 +32,9 @@ def calculate_silhouette_score(X, labels):
                     b_i = mean_dist_other
 
         if max(a_i, b_i) == 0:
-             s_i = 0
+            s_i = 0
         else:
-             s_i = (b_i - a_i) / max(a_i, b_i)
+            s_i = (b_i - a_i) / max(a_i, b_i)
 
         s_values.append(s_i)
 
