@@ -91,6 +91,39 @@ def purity(X,labels):
     purity_score = total_correct / n_samples
     return purity_score
 
+def confusionMatrix(cluster_labels, true_labels):
+    unique_clusters = np.unique(cluster_labels)
+    confusion_matrices = []
+    
+    for cluster in unique_clusters:
+        # Get indices of points in this cluster
+        cluster_mask = (cluster_labels == cluster)
+        
+        # Find majority class in this cluster
+        cluster_true_labels = true_labels[cluster_mask]
+        unique, counts = np.unique(cluster_true_labels, return_counts=True)
+        majority_class = unique[np.argmax(counts)]
+        
+        
+        # True Positives: in cluster AND majority class
+        tp = np.sum((cluster_labels == cluster) & (true_labels == majority_class))
+        
+        # False Positives: in cluster BUT NOT majority class
+        fp = np.sum((cluster_labels == cluster) & (true_labels != majority_class))
+        
+        # False Negatives: NOT in cluster BUT is majority class
+        fn = np.sum((cluster_labels != cluster) & (true_labels == majority_class))
+        
+        # True Negatives: NOT in cluster AND NOT majority class
+        tn = np.sum((cluster_labels != cluster) & (true_labels != majority_class))
+        
+        cm = np.array([[tp, fp],
+                       [fn, tn]])
+        confusion_matrices.append(cm) 
+    return confusion_matrices
+
+
+
 
 
 
