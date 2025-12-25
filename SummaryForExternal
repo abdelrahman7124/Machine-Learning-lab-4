@@ -1,0 +1,79 @@
+1. Adjusted Rand Index (ARI)
+Range:
+[-1, 1]
+
+Better:
+Higher is better (1 is perfect agreement)
+
+What it measures:
+Similarity between predicted clusters and true class labels, adjusted for chance.
+
+How it works:
+- Considers all pairs of samples
+- Checks whether pairs are assigned consistently in both labelings
+- Subtracts expected agreement of random labeling
+
+Formula:
+ARI = (Index - Expected Index) / (Max Index - Expected Index)
+
+Interpretation:
+- 1   -> Perfect agreement
+- 0   -> Random labeling
+- < 0 -> Worse than random
+
+Key advantage:
+Corrects for chance and penalizes over-clustering
+
+
+
+2. Normalized Mutual Information (NMI)
+
+Range:
+[0, 1]
+
+Better:
+Higher is better (closer to 1)
+
+What it measures:
+Amount of shared information between predicted cluster labels and true class labels,
+normalized to remove dependence on dataset size and number of clusters.
+
+How it works:
+- Measures how much knowing the cluster assignment reduces uncertainty about the true class
+- Uses joint and marginal probabilities of labels
+- Normalization ensures fair comparison across different cluster counts
+
+Formula:
+NMI(U, V) = MI(U, V) / sqrt(H(U) * H(V))
+
+Interpretation:
+- 1 -> Perfect agreement
+- 0 -> No mutual information
+- Invariant to label permutations
+
+
+
+3. Purity
+
+Range:
+[0, 1]
+
+Better:
+Higher is better
+
+What it measures:
+How pure each cluster is with respect to the true class labels.
+
+How it works:
+- For each cluster, find the majority true class
+- Sum majority counts across clusters
+- Divide by total number of samples
+
+Formula:
+Purity = (1 / N) * Σ max_j |C_k ∩ L_j|
+
+Interpretation:
+- 1 -> Each cluster contains only one class
+
+Major drawback:
+Purity increases with the number of clusters and does not penalize over-clustering
